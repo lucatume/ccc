@@ -1,0 +1,14 @@
+{
+    "name": "luca/ccc",
+    "require-dev": {
+        "behat/behat": "^3.2",
+        "phpunit/phpunit": "^5.6"
+    },
+    "authors": [
+        {
+            "name": "Luca Tumedei",
+            "email": "luca@theaveragedev.com"
+        }
+    ],
+    "require": {}
+}

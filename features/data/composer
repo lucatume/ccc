@@ -1,0 +1,35 @@
+#!/usr/bin/env php
+
+<?php
+$semaphoreId = 100; // same from FeatureContext!
+$segmentId   = 200; // same from FeatureContext!
+$processesId = 23; // same from FeatureContext!
+
+// get a handle to the semaphore associated with the shared memory
+// segment we want
+$sem = sem_get($semaphoreId,1,0600);
+
+// ensure exclusive access to the semaphore
+$acquired = sem_acquire( $sem );
+if ( ! $acquired ) {
+	throw new RuntimeException( 'Could not acquire semaphore' );
+}
+
+// get a handle to our shared memory segment
+$shm = shm_attach($segmentId,16384,0600);
+
+// retrieve a value from the shared memory segment
+$processes = shm_get_var($shm,$processesId);
+
+// store this process call
+array_shift($argv);
+$processes[] = 'composer ' . implode(' ',$argv);
+
+// store the value back in the shared memory segment
+shm_put_var($shm,$processesId,$processes);
+
+// release the handle to the shared memory segment
+shm_detach($shm);
+
+// release the semaphore so other processes can acquire it
+sem_release($sem);
